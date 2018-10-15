@@ -18,24 +18,40 @@ class Network:
 
         self.delta_ouput = None
 
+        self.lrate = 0.5
+
     def forward(self):
         input = self.input
 
         for i,l in enumerate(self.layers):
-            print ("Layer " , i)
+            #print ("Layer " , i)
             input = l.forward_prop(input)
-            print (input.shape , input)
+            #print (input.shape , input)
         net.output = input
 
     def backward(self):
-        for i,l in enumerate(self.layers):
-            
+
+        error = net.output - net.y_hot
+        delta = -error * sigmoid(self.layers[-1].output, deriv=True)
+
+        for i in range(len(self.layers)-1,1,-1):
+            print (i)
+            self.layers[i].backward_prop(delta)
+            delta = self.layers[i].delta
+
+    def update(self):
+
+        for i in range(len(self.layers)):
+            layer = self.layers[i]
+
+            layer.weights += self.lrate * layer.delta * layer.output
+
 
     def calculate_loss(self,type):
         net.y_hot = self.one_hot(self.classes,y)
 
         if type == "sse":
-            loss = (net.output - net.y_hot) ** 2
+            loss = ((net.output - net.y_hot) ** 2)/2
             avg_loss = np.sum(loss)/len(y)
 
         self.delta_ouput = loss
@@ -50,7 +66,6 @@ class Network:
         return np.array(encod)
 
 class Layer:
-
     def __init__(self, input_shape, output_shape, activation ):
         self.weights =  np.random.rand(input_shape,output_shape)
         self.bias = np.random.rand(output_shape)
@@ -63,26 +78,36 @@ class Layer:
 
         self.delta = None
 
+        self.output = None
+        self.h_output = None
+
     def forward_prop(self, x ):
 
-        self.output = np.dot( x , self.weights  )
+        self.output = np.dot(x, self.weights)
 
         if self.activation == "relu":
-            self.output = np.max(0,self.output)
+            self.h_output = np.max(0,self.output)
 
         elif self.activation == "sigmoid":
-            self.output = 1/(1+np.exp(self.output))
+            self.h_output = 1/(1+np.exp(self.output))
 
-        return self.output
+        return self.h_output
 
-    def backward_prop(self,x):
+    def backward_prop(self,delta_plus):
 
-        if self.activation =="sigmoid":
-            return x * (1 - x)
+        back_out = np.dot(delta_plus ,self.weights.T )
+
+        if self.activation == "sigmoid":
+            self.delta = back_out * sigmoid(self.output, deriv=True)
+
+        return self.delta
 
     def update_weight(self):
         pass
 
+def sigmoid(x,deriv = False):
+    if deriv:
+        return x*(1-x)
 
 data = datasets.load_digits()
 x = data.data[:2]
@@ -104,6 +129,11 @@ net.y = y
 
 
 # forward prop
-net.forward()
-loss=  net.calculate_loss("sse")
+for i in range(1):
+    net.forward()
+    loss=  net.calculate_loss("sse")
+    print (i,loss[1])
+    net.backward()
+    #net.update()
+
 print("My Net")
