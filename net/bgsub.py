@@ -32,8 +32,8 @@ def grabCut(img):
     return img
 
 def main():
-    img_bg = cv2.imread(bg_img_path)
-    img_fg = cv2.imread(fg_img_path)
+    img_bg = cv2.imread(bg_img_path)[100:,:]
+    img_fg = cv2.imread(fg_img_path)[100:,:]
 
     hsv_bg = cv2.cvtColor(img_bg, cv2.COLOR_BGR2HSV)
     hsv_fg = cv2.cvtColor(img_fg, cv2.COLOR_BGR2HSV)
@@ -58,7 +58,7 @@ def main():
 
     # gray
     gray_img = cv2.cvtColor(img_fg, cv2.COLOR_BGR2GRAY)
-    canny = cv2.Canny(gray_img, 30, 120)
+    canny = cv2.Canny(gray_img, 30, 90)
     canny_dilated = cv2.dilate(canny, (11, 11))
 
     hue_range = list(range(mode_h-10, mode_h+10))
@@ -81,12 +81,24 @@ def main():
 
     canny_filtered = cv2.bitwise_and(canny_dilated,mask)
 
+    # find contours---------------------------------------
+    img_cont = img_fg * 0
+    mode_gray = cv2.cvtColor(mode_img, cv2.COLOR_BGR2GRAY)
+    _,thresh = cv2.threshold(mode_gray, 10, 255, cv2.THRESH_BINARY)
+    image, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    contours.sort(key=lambda x: cv2.contourArea(x),reverse = True)
+    img_cont = cv2.drawContours(img_cont, contours, 0, (255, 255, 255), 3)
+    #max contours
+
+    canny_filtered = canny_filtered & img_cont[:,:,0]
 
     rect = (150, 152, 418, 453)
     cv2.rectangle(img_fg,rect[0:2],rect[2:],(255,0,0),3)
 
-    cv2.imshow("mode_img", mode_img)
-    #cv2.imshow("img_bg",img_bg)
+
+    cv2.imshow("mode_img", thresh)
+    cv2.imshow("img_cont",img_cont)
     cv2.imshow("img_fg",img_bg)
     cv2.imshow("canny_dilated",canny_dilated)
     cv2.imshow("canny_filtered",canny_filtered)
