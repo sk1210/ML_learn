@@ -78,11 +78,12 @@ def convolve( input, f_h ,f_w , pad = 1, stride = 1 ):
     for i in range(C):
         conv_out_mat[i] = convolve2d(input[0][:, :, i], Weight[0][i], mode='same')
 
+    filter_out = np.sum(conv_out_mat, axis=0)
 
     print("Debug")
 
 
-small = cv2.resize(testImg,(8,8))
+small = testImg#cv2.resize(testImg,(8,8))
 input = np.array([small])
 
 convolve(input , 3,3,1,1)
