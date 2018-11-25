@@ -31,7 +31,7 @@ colors = [  ( random.randint(0,255),random.randint(0,255),random.randint(0,255) 
 for i,imgName in enumerate(images):
 	outName = imgName.replace( images_path ,  output_path )
 	print (outName)
-	X = LoadBatches.getImageArr(imgName , args.input_width  , args.input_height  )
+	X = LoadBatches.getImageArr(imgName , input_width  , input_height  )
 	pr = m.predict( np.array([X]) )[0]
 	pr = pr.reshape(( output_height ,  output_width , n_classes ) ).argmax( axis=2 )
 	seg_img = np.zeros( ( output_height , output_width , 3  ) )
