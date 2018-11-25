@@ -16,7 +16,7 @@ save_weights_path = "gdrive/My Drive/My_Projects/weights/vgg_segnet"
 epochs = 50
 load_weights = ""
 optimizer_name = "adadelta"
-model_name = "vgg_segnet"
+model_name = "vgg_unet"
 
 
 modelFns = { 'vgg_segnet':Models.VGGSegnet.VGGSegnet ,
