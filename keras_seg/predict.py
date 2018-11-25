@@ -43,7 +43,7 @@ for i,imgName in enumerate(images):
 	seg_img = cv2.resize(seg_img  , (input_width , input_height ))
 	img = cv2.imread(imgName)
 	img = cv2.resize(img  , (input_width , input_height ))
-	out_img = np.hstack(img, seg_img))
+	out_img = np.hstack((img, seg_img))
 	cv2.imwrite(  outName , out_img )
 	print (i)
 	if i>100:break
