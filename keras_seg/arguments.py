@@ -12,7 +12,7 @@ n_classes = 2
 input_height = 640
 input_width = 480
 
-save_weights_path = "weights/vgg_segnet"
+save_weights_path = "gdrive/My Drive/My_Projects/weights/vgg_segnet"
 epochs = 50
 load_weights = ""
 optimizer_name = "adadelta"
