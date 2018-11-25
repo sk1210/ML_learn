@@ -1,7 +1,7 @@
 import Models , LoadBatches
 
 label_dir = r"gdrive/My Drive/My_Projects/data/human_seg/ann/"
-img_dir = r"gdrive/My Drive/My_Projects/data/human_seg/img"
+img_dir = r"gdrive/My Drive/My_Projects/data/human_seg/img/"
 mask = r"gdrive/My Drive/My_Projects/data/human_seg/mask/"
 
 
