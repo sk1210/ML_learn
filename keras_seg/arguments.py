@@ -7,7 +7,7 @@ mask = r"gdrive/My Drive/My_Projects/data/human_seg/mask/"
 
 train_images_path = img_dir
 train_segs_path = mask
-train_batch_size = 6
+train_batch_size = 4
 n_classes = 2
 input_height = 640
 input_width = 480
