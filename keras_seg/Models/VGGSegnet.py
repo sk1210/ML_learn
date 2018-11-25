@@ -85,7 +85,7 @@ def VGGSegnet( n_classes ,  input_height=416, input_width=608 , vgg_level=3):
 	model.outputWidth = outputWidth
 	model.outputHeight = outputHeight
 	
-	m.summary()
+	model.summary()
 
 	return model
 
