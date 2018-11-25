@@ -24,6 +24,7 @@ def train():
 
 
 	for ep in range( epochs ):
+		print(ep)
 		m.fit_generator( G , 512  , epochs=1 )
 		m.save_weights( save_weights_path + "." + str( ep ) )
 		m.save( save_weights_path + ".model." + str( ep ) )
