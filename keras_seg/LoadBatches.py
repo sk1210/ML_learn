@@ -46,7 +46,7 @@ def getSegmentationArr( path , nClasses ,  width , height  ):
 		img = img[:, : , 0]
 
 		for c in range(nClasses):
-			seg_labels[: , : , c ] = (img == c ).astype(int)
+			seg_labels[: , : , c ] = (img == c*255 ).astype(int)
 
 	except Exception:
 		print (e)
