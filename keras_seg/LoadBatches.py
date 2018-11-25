@@ -42,7 +42,7 @@ def getSegmentationArr( path , nClasses ,  width , height  ):
 	seg_labels = np.zeros((  height , width  , nClasses ))
 	try:
 		img = cv2.imread(path, 1)
-		img = cv2.resize(img, ( width , height ))
+		img = cv2.resize(img, ( width , height ),0,0,cv2.INTER_NEAREST)
 		img = img[:, : , 0]
 
 		for c in range(nClasses):
