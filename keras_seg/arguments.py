@@ -1,9 +1,10 @@
 import Models , LoadBatches
 
-label_dir = r"/home/shahrukh/Files/Data/person_seg__ds9/ann/"
-img_dir = r"/home/shahrukh/Files/Data/person_seg__ds9/img/"
-mask = r"/home/shahrukh/Files/Data/person_seg__ds9/mask/"
+label_dir = r"gdrive/My Drive/My_Projects/data/human_seg/ann/"
+img_dir = r"gdrive/My Drive/My_Projects/data/human_seg/img"
+#mask = r"/home/shahrukh/Files/Data/person_seg__ds9/mask/"
 
+gdrive/My Drive/My_Projects/data/human_seg
 train_images_path = img_dir
 train_segs_path = mask
 train_batch_size = 1
