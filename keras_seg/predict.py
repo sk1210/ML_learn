@@ -24,7 +24,7 @@ m.compile(loss='categorical_crossentropy',
 output_height = m.outputHeight
 output_width = m.outputWidth
 
-images = glob.glob( images_path + "*.jpg"  ) + glob.glob( images_path + "*.png"  ) +  glob.glob( images_path + "*.jpeg"  )
+images = glob.glob( images_path + "*.jpg"  ) + glob.glob( images_path + "*.png"  ) +  glob.glob( images_path + "*.jpeg" ) +glob.glob( images_path + "*.JPG" 
 images.sort()
 
 colors = [  ( random.randint(0,255),random.randint(0,255),random.randint(0,255)   ) for _ in range(n_classes)  ]
