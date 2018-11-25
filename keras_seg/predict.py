@@ -41,7 +41,7 @@ for i,imgName in enumerate(images):
 		seg_img[:,:,1] += ((pr[:,: ] == c )*( colors[c][1] )).astype('uint8')
 		seg_img[:,:,2] += ((pr[:,: ] == c )*( colors[c][2] )).astype('uint8')
 	seg_img = cv2.resize(seg_img  , (input_width , input_height ))
-	out_img = np.hstack((cv2.imread(imgName,out_img))
+	out_img = np.hstack((cv2.imread(imgName),out_img))
 	cv2.imwrite(  outName , seg_img )
 	print (i)
 	if i>100:break
