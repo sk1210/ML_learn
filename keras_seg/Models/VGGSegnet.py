@@ -8,8 +8,8 @@ from keras.layers import *
 
 
 import os
-file_path = os.path.dirname( os.path.abspath(__file__) )
-VGG_Weights_path = file_path+"/../data/vgg16_weights_th_dim_ordering_th_kernels.h5"
+file_path = r"gdrive/My Drive/My_Projects/weights/"
+VGG_Weights_path = file_path+"vgg16_weights_th_dim_ordering_th_kernels.h5"
 
 
 def VGGSegnet( n_classes ,  input_height=416, input_width=608 , vgg_level=3):
@@ -53,7 +53,7 @@ def VGGSegnet( n_classes ,  input_height=416, input_width=608 , vgg_level=3):
 	x = Dense( 1000 , activation='softmax', name='predictions')(x)
 
 	vgg  = Model(  img_input , x  )
-	#vgg.load_weights(VGG_Weights_path)
+	vgg.load_weights(VGG_Weights_path)
 
 	levels = [f1 , f2 , f3 , f4 , f5 ]
 
