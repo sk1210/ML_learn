@@ -10,6 +10,7 @@ def train():
 	m.compile(loss='categorical_crossentropy',
 		  optimizer= optimizer_name ,
 		  metrics=['accuracy'])
+	m.summary()
 
 
 	if len( load_weights ) > 0:
