@@ -9,7 +9,7 @@ from arguments import *
 
 images_path = img_dir
 images_path = "gdrive/My Drive/My_Projects/data/human_seg/test_images/"
-weights_path = "gdrive/My Drive/My_Projects/weights/vgg_segnet.3"
+weights_path = "gdrive/My Drive/My_Projects/weights/vgg_segnet.14"
 output_path = "gdrive/My Drive/My_Projects/results/"
 modelFN = modelFns[ model_name ]
 
