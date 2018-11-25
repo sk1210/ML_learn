@@ -7,7 +7,7 @@ import numpy as np
 import random
 from arguments import *
 
-images_path = args.test_images
+images_path = img_dir
 weights_path = "gdrive/My Drive/My_Projects/weights/vgg_segnet.3"
 output_path = "gdrive/My Drive/My_Projects/results/"
 modelFN = modelFns[ model_name ]
