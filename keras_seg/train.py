@@ -24,7 +24,7 @@ def train():
 	G  = LoadBatches.imageSegmentationGenerator( train_images_path , train_segs_path ,  train_batch_size,  n_classes , input_height , input_width , output_height , output_width   )
 
 
-	for ep in range( epochs ):
+	for ep in range( epoch+1,epochs ):
 		print(ep)
 		m.fit_generator( G , 512  , epochs=1 )
 		m.save_weights( save_weights_path + "." + str( ep ) )
