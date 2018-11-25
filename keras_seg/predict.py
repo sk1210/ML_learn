@@ -5,7 +5,7 @@ import glob
 import cv2
 import numpy as np
 import random
-
+from arguments import *
 
 images_path = args.test_images
 weights_path = "gdrive/My Drive/My_Projects/weights/vgg_segnet.3"
