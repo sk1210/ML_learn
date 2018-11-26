@@ -12,10 +12,10 @@ def train():
 		  metrics=['accuracy'])
 	m.summary()
 
-	load_weights =  "gdrive/My Drive/My_Projects/weights/vgg_segnet.3"
+	#load_weights =  "gdrive/My Drive/My_Projects/weights/vgg_segnet.3"
 	epoch = 3
 	if len( load_weights ) > 0:
-		m.load_weights(load_weights)
+		m.load_weights(load_weights, by_name=False,skip_mismatch=False)
 
 	print ("Model output shape" ,  m.output_shape)
 
