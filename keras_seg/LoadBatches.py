@@ -56,12 +56,45 @@ def getSegmentationArr( path , nClasses ,  width , height  ):
 
 
 
-def imageSegmentationGenerator( images_path , segs_path ,  batch_size,  n_classes , input_height , input_width , output_height , output_width   ):
+def imageSegmentationGenerator_old( images_path , segs_path ,  batch_size,  n_classes , input_height , input_width , output_height , output_width   ):
 
 	images = glob.glob( images_path + "/*.jpg"  ) + glob.glob( images_path + "/*.png"  ) +  glob.glob( images_path + "*/.jpeg"  )
 	images.sort()
 	segmentations  = glob.glob( segs_path + "/*.jpg"  ) + glob.glob( segs_path + "/*.png"  ) +  glob.glob( segs_path + "/*.jpeg"  )
 	segmentations.sort()
+
+	assert len( images ) == len(segmentations)
+	for im , seg in zip(images,segmentations):
+		assert(  im.split('/')[-1].split(".")[0] ==  seg.split('/')[-1].split(".")[0] )
+
+	zipped = itertools.cycle( zip(images,segmentations) )
+
+	while True:
+		X = []
+		Y = []
+		for _ in range( batch_size) :
+			im , seg = next(zipped)
+			X.append( getImageArr(im , input_width , input_height )  )
+			Y.append( getSegmentationArr( seg , n_classes , output_width , output_height )  )
+
+		yield np.array(X) , np.array(Y)
+		
+def readImages(folder_dir):
+    folders = glob.glob(folder_dir + "/*")	
+    img_dir = []
+    label_dir = []
+    for folder in folders[0:2]:
+        label_dir += glob.glob( os.path.join(folder, "mask") + "/*.png")
+        img_dir += glob.glob( os.path.join(folder, "img") + "/*.png")
+    return img_dir
+	
+def imageSegmentationGenerator( images_path , segs_path ,  batch_size,  n_classes , input_height , input_width , output_height , output_width   ):
+	images,segmentations =  readImages(images_path)
+	#images = glob.glob( images_path + "/*.jpg"  ) + glob.glob( images_path + "/*.png"  ) +  glob.glob( images_path + "*/.jpeg"  )
+	images.sort()
+	#segmentations  = glob.glob( segs_path + "/*.jpg"  ) + glob.glob( segs_path + "/*.png"  ) +  glob.glob( segs_path + "/*.jpeg"  )
+	segmentations.sort()
+	
 
 	assert len( images ) == len(segmentations)
 	for im , seg in zip(images,segmentations):
