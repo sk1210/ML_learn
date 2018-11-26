@@ -87,7 +87,7 @@ def readImages(folder_dir):
     for folder in folders[0:2]:
         label_dir += glob.glob( os.path.join(folder, "mask") + "/*.png")
         img_dir += glob.glob( os.path.join(folder, "img") + "/*.png")
-    return img_dir
+    return img_dir,label_dir
 	
 def imageSegmentationGenerator( images_path , segs_path ,  batch_size,  n_classes , input_height , input_width , output_height , output_width   ):
 	images,segmentations =  readImages(images_path)
