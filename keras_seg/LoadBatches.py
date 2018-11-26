@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 import glob
 import itertools
+import os
 
 
 def getImageArr( path , width , height , imgNorm="divide" , odering='channels_first' ):
