@@ -148,7 +148,7 @@ class ImageGeneratot:
         return img_dir,label_dir
     
     def loadImages(self):
-        self.imagesList,self.LabelsList =  self.readImages(images_path)
+        self.imagesList,self.LabelsList =  self.readImages(self.images_path)
         #self.imagesList = glob.glob(self.images_path + "*.jpg") + glob.glob(self.images_path + "*.png") + glob.glob(self.images_path + "*.jpeg")
         #self.LabelsList = glob.glob(self.segs_path + "*.jpg") + glob.glob(self.segs_path + "*.png") + glob.glob(self.segs_path + "*.jpeg")
         
