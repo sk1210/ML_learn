@@ -19,6 +19,8 @@ def VGGUnet( n_classes ,  input_height=416, input_width=608 , vgg_level=3):
 
 	x = Conv2D(64, (3, 3), activation='relu', padding='same', name='block1_conv1', data_format=IMAGE_ORDERING )(img_input)
 	x = Conv2D(64, (3, 3), activation='relu', padding='same', name='block1_conv2', data_format=IMAGE_ORDERING )(x)
+	f0 = x
+	
 	x = MaxPooling2D((2, 2), strides=(2, 2), name='block1_pool', data_format=IMAGE_ORDERING )(x)
 	f1 = x
 	# Block 2
@@ -81,7 +83,13 @@ def VGGUnet( n_classes ,  input_height=416, input_width=608 , vgg_level=3):
 	o = ( ZeroPadding2D((1,1)  , data_format=IMAGE_ORDERING ))(o)
 	o = ( Conv2D( 64 , (3, 3), padding='valid'  , data_format=IMAGE_ORDERING ))(o)
 	o = ( BatchNormalization())(o)
-
+	
+	# add one more upSampling block
+	o = (UpSampling2D((2, 2), data_format=IMAGE_ORDERING))(o)
+	o = (concatenate([o, f0], axis=1))
+	o = (ZeroPadding2D((1, 1), data_format=IMAGE_ORDERING))(o)
+	o = (Conv2D(32, (3, 3), padding='valid', data_format=IMAGE_ORDERING))(o)
+	o = (BatchNormalization())(o)
 
 	o =  Conv2D( n_classes , (3, 3) , padding='same', data_format=IMAGE_ORDERING )( o )
 	o_shape = Model(img_input , o ).output_shape
