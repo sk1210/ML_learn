@@ -8,7 +8,7 @@ import random
 from arguments import *
 
 images_path = img_dir
-#images_path = "gdrive/My Drive/My_Projects/data/human_seg/test_images/"
+images_path = "gdrive/My Drive/My_Projects/data/human_seg/test_images/"
 weights_path = "gdrive/My Drive/My_Projects/weights/vgg_unet_448_.1"
 output_path = "gdrive/My Drive/My_Projects/results/"
 modelFN = modelFns[ model_name ]
