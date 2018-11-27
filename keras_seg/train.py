@@ -24,7 +24,7 @@ def train():
 	output_width = m.outputWidth
 
 	#G  = LoadBatches.imageSegmentationGenerator( train_images_path , train_segs_path ,  train_batch_size,  n_classes , input_height , input_width , output_height , output_width   )
-	gen  = LoadBatches.imageSegmentationGenerator( train_images_path , train_segs_path ,  train_batch_size,  n_classes , input_height , input_width , output_height , output_width   )	
+	gen  = LoadBatches1.ImageGeneratot( train_images_path , train_segs_path ,  train_batch_size,  n_classes , input_height , input_width , output_height , output_width   )	
 	G = gen.getBatch()
 	for ep in range( epoch+1,epochs ):
 		print(ep)
