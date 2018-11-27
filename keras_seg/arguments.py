@@ -14,7 +14,7 @@ n_classes = 2
 input_height = 448
 input_width = 448
 
-save_weights_path = "gdrive/My Drive/My_Projects/weights/vgg_unet_448"
+save_weights_path = "gdrive/My Drive/My_Projects/weights/vgg_unet_448_"
 epochs = 50
 load_weights = ""
 optimizer_name = "adadelta"
