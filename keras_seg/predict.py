@@ -7,6 +7,7 @@ import numpy as np
 import random
 import sys
 from arguments import *
+from matplotlib import pyplot as plt
 
 images_path = img_dir
 images_path = "gdrive/My Drive/My_Projects/data/human_seg/test_images/"
@@ -49,5 +50,9 @@ for i,imgName in enumerate(images):
 	out_img = np.hstack((img, seg_img))
 	cv2.imwrite(  outName , out_img )
 	print (i)
+	
+	plt.imshow(img)
+	plt.show()
+
 	if i>100:break
 
