@@ -1,5 +1,5 @@
    #utils
-    import tensorflow as tf
+import tensorflow as tf
 import numpy as np
 import argparse
 import Models
@@ -8,9 +8,6 @@ from keras import backend as K
 
 
 data_path = r"C:\Users\Z654281\Desktop\DATA\dataset\mapillary-vistas-dataset_zf_5k_subset/"
-
-class_weights = np.array([0.2, 1, 1, 1,1])
-class_weights = np.array([0.2, 1])
 
 modelFns = {'aen':Models.aen.VGGSegnet ,
             'vgg_segnet':Models.VGGSegnet.VGGSegnet ,
@@ -56,7 +53,7 @@ def categorical_crossentropy1(target, output, from_logits=False, axis=-1):
         # manual computation of crossentropy
         _epsilon = _to_tensor(epsilon(), output.dtype.base_dtype)
         output = tf.clip_by_value(output, _epsilon, 1. - _epsilon)
-        return - tf.reduce_sum(target * tf.log(output)*class_weights, axis)
+        return - tf.reduce_sum(target * tf.log(output), axis)
     else:
         return tf.nn.softmax_cross_entropy_with_logits(labels=target,
                                                        logits=output)
