@@ -5,14 +5,17 @@ import glob
 import cv2
 import numpy as np
 import random
+import sys
 from arguments import *
 
 images_path = img_dir
 images_path = "gdrive/My Drive/My_Projects/data/human_seg/test_images/"
-weights_path = "gdrive/My Drive/My_Projects/weights/vgg_unet_448_.1"
+weights_path = "gdrive/My Drive/My_Projects/weights/vgg_unet_448_."
 output_path = "gdrive/My Drive/My_Projects/results/"
 modelFN = modelFns[ model_name ]
 
+
+weights_path += sys.argv(1)
 m = modelFN( n_classes , input_height=input_height, input_width=input_width )
 m.load_weights(  weights_path )
 
