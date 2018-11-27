@@ -50,7 +50,7 @@ for i,imgName in enumerate(images):
 	out_img = np.hstack((img, seg_img))
 	cv2.imwrite(  outName , out_img )
 	print (i)
-	plt.title('my picture'+str(i)
+	plt.title('my picture'+str(i))
 	plt.imshow(img)
 	plt.show()
 
