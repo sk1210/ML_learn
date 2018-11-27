@@ -8,7 +8,7 @@ from imgaug import augmenters as iaa
 import numpy as np
 import json
 from matplotlib import pyplot as plt
-from utils import *
+
 
 class Labels:
     def __init__(self,configFile):
@@ -83,7 +83,7 @@ class ImageGeneratot:
         self.index = 0
 
         #load Images path
-        self.train_index = 4000
+        self.train_index = 4800
         self.test_index = 1000
 
         self.loadImages()
@@ -137,12 +137,21 @@ class ImageGeneratot:
             ],
             random_order=True
         )
-
+        
+    def readImages(self, folder_dir):
+        folders = glob.glob(folder_dir + "/*")	
+        img_dir = []
+        label_dir = []
+        for folder in folders[0:2]:
+            label_dir += glob.glob( os.path.join(folder, "mask") + "/*.png")
+            img_dir += glob.glob( os.path.join(folder, "img") + "/*.png")
+        return img_dir,label_dir
+    
     def loadImages(self):
-
-        self.imagesList = glob.glob(self.images_path + "*.jpg") + glob.glob(self.images_path + "*.png") + glob.glob(self.images_path + "*.jpeg")
-        self.LabelsList = glob.glob(self.segs_path + "*.jpg") + glob.glob(self.segs_path + "*.png") + glob.glob(self.segs_path + "*.jpeg")
-
+        self.imagesList,self.LabelsList =  self.readImages(images_path)
+        #self.imagesList = glob.glob(self.images_path + "*.jpg") + glob.glob(self.images_path + "*.png") + glob.glob(self.images_path + "*.jpeg")
+        #self.LabelsList = glob.glob(self.segs_path + "*.jpg") + glob.glob(self.segs_path + "*.png") + glob.glob(self.segs_path + "*.jpeg")
+        
         self.imagesList.sort()
         self.LabelsList.sort()
 
@@ -195,6 +204,7 @@ class ImageGeneratot:
         # rescale and switch axis
 
         images = np.rollaxis(images, 3, 1)
+        images = images / 255.0
 
         return images,seg_labels
 
@@ -214,11 +224,13 @@ class ImageGeneratot:
 
         for img in seg_labels_augment:
             seg_out = np.zeros((self.input_height, self.input_width, self.n_classes))
-
-            totalClass = 152
-            for i in range(totalClass):
-                c = labels.LUT(i)
-                seg_out[:, :, c] += (img == i).astype(int)
+            seg_out[:, :, 0] += (img == 0).astype(int)
+            seg_out[:, :, 1] += (img == 255).astype(int)
+            
+#             totalClass = 152
+#             for i in range(totalClass):
+#                 c = labels.LUT(i)
+#                 seg_out[:, :, c] += (img == i).astype(int)
 
             seg_labels = np.reshape(seg_out, (self.output_width * self.output_height, self.n_classes))
             seg_labels_final.append(seg_labels)
@@ -242,8 +254,8 @@ class ImageGeneratot:
         #print("debug")
 
 
-configFile = 'config.json'
-labels = Labels(os.path.join(data_path,configFile))
+# configFile = 'config.json'
+# labels = Labels(os.path.join(data_path,configFile))
 
 if __name__ == "__main__":
 
