@@ -15,7 +15,7 @@ output_path = "gdrive/My Drive/My_Projects/results/"
 modelFN = modelFns[ model_name ]
 
 
-weights_path += sys.argv(1)
+weights_path += sys.argv[1]
 m = modelFN( n_classes , input_height=input_height, input_width=input_width )
 m.load_weights(  weights_path )
 
