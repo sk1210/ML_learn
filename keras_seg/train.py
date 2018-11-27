@@ -1,7 +1,7 @@
 import argparse
 import Models , LoadBatches
 import LoadBatches1
-
+import time
 from arguments import *
 
 def train():
@@ -30,6 +30,7 @@ def train():
 		print(ep)
 		m.fit_generator( G , 512  , epochs=1 )
 		m.save_weights( save_weights_path + "." + str( ep ) )
+		time.sleep(3)
 		#m.save( save_weights_path + ".model." + str( ep ) )
 
 if __name__ == "__main__":
