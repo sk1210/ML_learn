@@ -1,0 +1,441 @@
+from utils import *
+import glob
+import os
+import itertools
+import random
+import cv2
+from imgaug import augmenters as iaa
+import numpy as np
+import json
+from matplotlib import pyplot as plt
+from utils import *
+
+class Labels:
+    def __init__(self,configFile):
+        self.configFile = configFile
+
+        with open(configFile) as config_file:
+            self.config = json.load(config_file)
+
+        self.totalClasses = len(self.config)
+
+        self.labelsMap = {
+            5:1,
+            15:2,
+            36:3,
+            37:4,
+            55:5,
+            #75:6,
+        }
+        self.labelsMap = {
+            38: 1,
+            36: 1,
+            37: 1,
+            # 55: 5,
+            # 75:6,
+        }
+        self.labelsMap = {
+            5:1,
+            38:2,
+            36:3,
+            37:4,
+            # 55: 5,
+            # 75:6,
+        }
+
+        self.inverseMap = dict([(self.labelsMap[i], i) for i in self.labelsMap])
+        self.default = 0
+        self.default_color = (0,0,0)
+
+    def LUT(self,value):
+
+        if value in self.labelsMap:
+            return self.labelsMap[value]
+        return self.default
+
+    def getColor(self,value):
+
+        # inverse map
+        if value == self.default:
+            return self.default_color
+        elif value == 3:
+            return (0,0,255)
+        assert value in self.inverseMap,"Unknown pixel"
+        n = self.inverseMap[value]
+        return self.config["labels"][n]["color"]
+
+
+class ImageGeneratot:
+
+    def __init__(self,images_path, segs_path, batch_size, n_classes, input_height, input_width, output_height,output_width):
+
+        # set paths variable
+        self.images_path = images_path
+        self.segs_path = segs_path
+        self.batch_size = batch_size
+        self.n_classes = n_classes
+        self.input_height = input_height
+        self.input_width = input_width
+        self.output_height = output_height
+        self.output_width = output_width
+
+        # init iterator variables
+        self.index = 0
+
+        #load Images path
+        self.train_index = 4000
+        self.test_index = 1000
+
+        self.loadImages()
+
+
+        # init all augmentor
+
+        self.augmentor()
+
+    def augmentor(self):
+        self.commonAug = iaa.Sequential([
+                    iaa.Fliplr(p=0.4)
+            ])
+        seq_det = self.commonAug.to_deterministic()
+
+        # ------------only on image ------------------------
+
+        sometimes = lambda aug: iaa.Sometimes(1, aug)
+
+        self.seq_img_only = iaa.Sequential(
+            [
+                iaa.SomeOf((0, 3),
+                           [
+
+                               iaa.OneOf([
+                                   iaa.GaussianBlur((0, 0.5)),  # blur images with a sigma between 0 and 3.0
+                                   iaa.AverageBlur(k=(2, 3)),
+                                   # blur image using local means with kernel sizes between 2 and 7
+                                   iaa.MedianBlur(k=(3, 3)),
+                                   # blur image using local medians with kernel sizes between 2 and 7
+                               ]),
+                               iaa.Sharpen(alpha=(0.1, 0.3), lightness=(0.8, 1)),  # sharpen images
+
+
+                               iaa.AdditiveGaussianNoise(loc=0, scale=(0.0, 0.05 * 255), per_channel=0.5),
+                               # add gaussian noise to images
+                               iaa.OneOf([
+                                   #iaa.Dropout((0.001, 0.02), per_channel=0.3),  # randomly remove up to 10% of the pixels
+                                   #iaa.CoarseDropout((0.03, 0.06), size_percent=(0.02, 0.05), per_channel=0.2),
+                               ]),
+
+                               # change brightness of images (by -10 to 10 of original value)
+                               iaa.AddToHueAndSaturation((-5, 5)),  # change hue and saturation
+                               iaa.Multiply((0.8, 1.2), per_channel=0.5),
+
+                               iaa.ContrastNormalization((0.8, 1.5), per_channel=0.5),  # improve or worsen the contrast
+
+                           ],
+                           random_order=True
+                           )
+            ],
+            random_order=True
+        )
+
+    def loadImages(self):
+
+        self.imagesList = glob.glob(self.images_path + "*.jpg") + glob.glob(self.images_path + "*.png") + glob.glob(self.images_path + "*.jpeg")
+        self.LabelsList = glob.glob(self.segs_path + "*.jpg") + glob.glob(self.segs_path + "*.png") + glob.glob(self.segs_path + "*.jpeg")
+
+        self.imagesList.sort()
+        self.LabelsList.sort()
+
+        assert len(self.imagesList) == len(self.LabelsList)
+
+        for im, seg in zip(self.imagesList, self.LabelsList):
+            assert (os.path.basename(im).split(".")[0] == os.path.basename(seg).split(".")[0])
+
+        self.zippedList = list(zip(self.imagesList, self.LabelsList))
+
+        self.zippedList_train = list(zip(self.imagesList[:self.train_index], self.LabelsList[:self.train_index]))
+
+        # shuffle data
+        random.seed(1000)
+        random.shuffle(self.zippedList_train)
+
+    def returnPair(self):
+
+        if self.index >= len(self.zippedList_train)-1: # reset index
+            self.index = 0
+        else:
+            self.index += 1
+            random.shuffle( self.zippedList_train )
+
+        return self.zippedList_train[self.index]
+
+    def getBatch(self):
+        while True:
+
+            X = []
+            Y = []
+            for _ in range(self.batch_size):
+                img_name, seg_name = self.returnPair()
+                X.append(img_name)
+                Y.append(seg_name)
+
+            # read batch and perform augmentation
+            yield self.readBatch(X,Y)
+
+    def readBatch(self,X,Y):
+
+        images = [ cv2.imread(img) for img in X]
+        seg_labels = [cv2.imread(seg,0) for seg in Y]
+
+        # augment
+        images, seg_labels = self.augment(images, seg_labels)
+
+        images = np.array(images)
+        seg_labels = np.array(seg_labels)
+        # rescale and switch axis
+
+        images = np.rollaxis(images, 3, 1)
+
+        return images,seg_labels
+
+    def augment(self,images,seg_labels):
+
+        # resize
+        images = [cv2.resize(img,(self.input_width,self.input_height),0,0,cv2.INTER_NEAREST) for img in images]
+        seg_labels = [cv2.resize(img, (self.input_width, self.input_height), 0, 0, cv2.INTER_NEAREST) for img in seg_labels]
+
+        images_aug = self.seq_img_only.augment_images(images)
+
+        seq_det = self.commonAug.to_deterministic()
+        images_aug_flipped = self.commonAug.augment_images(images_aug)
+        seg_labels_augment = self.commonAug.augment_images(seg_labels)
+
+        seg_labels_final = []
+
+        for img in seg_labels_augment:
+            seg_out = np.zeros((self.input_height, self.input_width, self.n_classes))
+
+            totalClass = 152
+            for i in range(totalClass):
+                c = labels.LUT(i)
+                seg_out[:, :, c] += (img == i).astype(int)
+
+            seg_labels = np.reshape(seg_out, (self.output_width * self.output_height, self.n_classes))
+            seg_labels_final.append(seg_labels)
+
+        return images_aug_flipped, seg_labels_final
+
+        # row, col = 2, self.batch_size * 2
+        # fig = plt.figure(figsize=(row, col))
+        # c = 0
+        # for i, img in enumerate(images+seg_labels):
+        #     c += 1
+        #     fig.add_subplot(row, col, c)
+        #     plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+        #
+        # for i, img in enumerate(images_aug_flipped+seg_labels_augment):
+        #     c += 1
+        #     fig.add_subplot(row, col, c)
+        #     plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+        # plt.show()
+
+        #print("debug")
+
+
+configFile = 'config.json'
+labels = Labels(os.path.join(data_path,configFile))
+
+if __name__ == "__main__":
+
+    args = createParser()
+    # args_list = readArgFromFile()
+    data_path = r"C:\Users\Z654281\Desktop\DATA\dataset\mapillary-vistas-dataset_zf_5k_subset/"
+
+    train_images_path = data_path + args.train_images + "//"
+    train_segs_path = data_path + args.train_annotations + "//"
+    train_batch_size = args.batch_size
+    n_classes = args.n_classes
+    input_height = args.input_height
+    input_width = args.input_width
+    validate = False  # args.validate
+    save_weights_path = args.save_weights_path
+    epochs = args.epochs
+    load_weights = args.load_weights
+    output_width, output_height = input_width, input_height
+
+    gen = ImageGeneratot(train_images_path , train_segs_path ,  train_batch_size,  n_classes , input_height , input_width , output_height , output_width)
+
+
+    p = gen.getBatch()
+
+    for i in range(10):
+        next(p)
+
+    print ("debug")
+    
+    
+    
+    #utils
+    import tensorflow as tf
+import numpy as np
+import argparse
+import Models
+import tensorflow as tf
+from keras import backend as K
+
+
+data_path = r"C:\Users\Z654281\Desktop\DATA\dataset\mapillary-vistas-dataset_zf_5k_subset/"
+
+class_weights = np.array([0.2, 1, 1, 1,1])
+class_weights = np.array([0.2, 1])
+
+modelFns = {'aen':Models.aen.VGGSegnet ,
+            'vgg_segnet':Models.VGGSegnet.VGGSegnet ,
+            'vgg_segnet1':Models.VGGSegnet1.VGGSegnet ,
+            'vgg_unet1':Models.VGGSegnet2.VGGSegnet,
+            'vgg_unet2':Models.VGGUnet.VGGUnet2 ,
+            'psp2':Models.VGGSegnet2.VGGSegnetPSP2,
+            'psp':Models.VGGSegnet2.VGGSegnetPSP
+            }
+
+# VARIABLE MANIPULATION
+def epsilon():
+
+    _EPSILON = 1e-7
+    return _EPSILON
+
+def _to_tensor(x, dtype):
+    """Convert the input `x` to a tensor of type `dtype`.
+
+    # Arguments
+        x: An object to be converted (numpy array, list, tensors).
+        dtype: The destination type.
+
+    # Returns
+        A tensor.
+    """
+    return tf.convert_to_tensor(x, dtype=dtype)
+
+def categorical_crossentropy1(target, output, from_logits=False, axis=-1):
+
+    print ("computing loss")
+    output_dimensions = list(range(len(output.get_shape())))
+    if axis != -1 and axis not in output_dimensions:
+        raise ValueError(
+            '{}{}{}'.format(
+                'Unexpected channels axis {}. '.format(axis),
+                'Expected to be -1 or one of the axes of `output`, ',
+                'which has {} dimensions.'.format(len(output.get_shape()))))
+
+    if not from_logits:
+        # scale preds so that the class probas of each sample sum to 1
+        output /= tf.reduce_sum(output, axis, True)
+        # manual computation of crossentropy
+        _epsilon = _to_tensor(epsilon(), output.dtype.base_dtype)
+        output = tf.clip_by_value(output, _epsilon, 1. - _epsilon)
+        return - tf.reduce_sum(target * tf.log(output)*class_weights, axis)
+    else:
+        return tf.nn.softmax_cross_entropy_with_logits(labels=target,
+                                                       logits=output)
+
+def categorical_crossentropy2(target, output, from_logits=False, axis=-1):
+    """Categorical crossentropy between an output tensor and a target tensor.
+
+    # Arguments
+        target: A tensor of the same shape as `output`.
+        output: A tensor resulting from a softmax
+            (unless `from_logits` is True, in which
+            case `output` is expected to be the logits).
+        from_logits: Boolean, whether `output` is the
+            result of a softmax, or is a tensor of logits.
+        axis: Int specifying the channels axis. `axis=-1`
+            corresponds to data format `channels_last`,
+            and `axis=1` corresponds to data format
+            `channels_first`.
+
+    # Returns
+        Output tensor.
+
+    # Raises
+        ValueError: if `axis` is neither -1 nor one of
+            the axes of `output`.
+    """
+    output_dimensions = list(range(len(output.get_shape())))
+    if axis != -1 and axis not in output_dimensions:
+        raise ValueError(
+            '{}{}{}'.format(
+                'Unexpected channels axis {}. '.format(axis),
+                'Expected to be -1 or one of the axes of `output`, ',
+                'which has {} dimensions.'.format(len(output.get_shape()))))
+    # Note: tf.nn.softmax_cross_entropy_with_logits
+    # expects logits, Keras expects probabilities.
+    if not from_logits:
+        # scale preds so that the class probas of each sample sum to 1
+        output /= tf.reduce_sum(output, axis, True)
+        # manual computation of crossentropy
+        _epsilon = _to_tensor(epsilon(), output.dtype.base_dtype)
+        output = tf.clip_by_value(output, _epsilon, 1. - _epsilon)
+        return - tf.reduce_sum(target * tf.log(output), axis)
+    else:
+        return tf.nn.softmax_cross_entropy_with_logits(labels=target,
+                                                       logits=output)
+
+def readArgFromFile():
+	args_list = []
+
+	with open("train_args.cfg") as f:
+		lines = f.readlines()
+		for line in lines:
+			line = line.strip()
+			if "#" in line:
+				continue
+			if "=" in line:
+				key, value = line.replace(" ","").split("=")
+
+				key = "--" + key
+				args_list.append(key)
+				args_list.append(value)
+			print (line,len(line))
+
+	return args_list
+
+def createParser():
+
+	parser = argparse.ArgumentParser()
+	parser.add_argument("--save_weights_path", type = str  )
+	parser.add_argument("--train_images", type = str  )
+	parser.add_argument("--train_annotations", type = str  )
+	parser.add_argument("--n_classes", type=int )
+	parser.add_argument("--input_height", type=int , default = 224  )
+	parser.add_argument("--input_width", type=int , default = 224 )
+
+	parser.add_argument('--validate',action='store_false')
+	parser.add_argument("--val_images", type = str , default = "")
+	parser.add_argument("--val_annotations", type = str , default = "")
+
+	parser.add_argument("--epochs", type = int, default = 5 )
+	parser.add_argument("--batch_size", type = int, default = 2 )
+	parser.add_argument("--val_batch_size", type = int, default = 2 )
+	parser.add_argument("--load_weights", type = str , default = "")
+
+	parser.add_argument("--model_name", type = str , default = "")
+	parser.add_argument("--optimizer_name", type = str , default = "adadelta")
+
+
+	argsList = readArgFromFile()
+	args = parser.parse_args(argsList)
+
+	return args
+
+
+def iou_loss_core(y_true, y_pred, smooth=1):
+    intersection = K.sum(K.abs(y_true * y_pred), axis=-1)
+    union = K.sum(y_true,-1) + K.sum(y_pred,-1) - intersection
+    iou = (intersection + smooth) / ( union + smooth)
+    return iou
+
+def mean_iou(y_true, y_pred, smooth=1,axis=-2):
+    intersection = K.sum(K.abs(y_true * y_pred), axis=axis)
+    union = K.sum(y_true,axis) + K.sum(y_pred,axis) - intersection
+    iou = (intersection + smooth) / ( union + smooth)
+    return iou
