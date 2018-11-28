@@ -11,7 +11,7 @@ from matplotlib import pyplot as plt
 from IPython.display import Image
 
 images_path = img_dir
-images_path = "gdrive/My Drive/My_Projects/data/human_seg/test_images/"
+#images_path = "gdrive/My Drive/My_Projects/data/human_seg/test_images/"
 weights_path = "gdrive/My Drive/My_Projects/weights/vgg_unet_448_."
 output_path = "gdrive/My Drive/My_Projects/results/"
 modelFN = modelFns[ model_name ]
