@@ -13,8 +13,8 @@ def train():
 		  metrics=['accuracy'])
 	m.summary()
 
-	load_weights =  "gdrive/My Drive/My_Projects/weights/vgg_unet_448_.6"
-	epoch = 6
+	load_weights =  "gdrive/My Drive/My_Projects/weights/vgg_unet_448_.40"
+	epoch = 40
 	if len( load_weights ) > 0:
 		m.load_weights(load_weights, by_name=False,skip_mismatch=False)
 
@@ -28,8 +28,9 @@ def train():
 	G = gen.getBatch()
 	for ep in range( epoch+1,epochs ):
 		print(ep)
-		m.fit_generator( G , 512  , epochs=1 )
-		m.save_weights( save_weights_path + "." + str( ep ) )
+		m.fit_generator( G , 1024  , epochs=1 )
+		if ep % 5 == 0:
+			m.save_weights( save_weights_path + "." + str( ep ) )
 		time.sleep(3)
 		#m.save( save_weights_path + ".model." + str( ep ) )
 
