@@ -52,7 +52,7 @@ for i,imgName in enumerate(images):
 	print (i)
 	plt.title('my picture'+str(i))
 	plt.imshow(img)
-	plt.show()
+	plt.show();
 
 	if i>100:break
 
