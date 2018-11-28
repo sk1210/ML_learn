@@ -54,7 +54,7 @@ for i,imgName in enumerate(images):
 	plt.title('my picture'+str(i))
 	plt.imshow(img)
 	plt.show();
-	display(Image(outName))
+	display(Image(out_img))
 
 	if i>100:break
 
