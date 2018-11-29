@@ -32,7 +32,7 @@ def train():
 		m.fit_generator( G , 512  , epochs=1 )
 		if ep % 2 == 0:
 			m.save_weights( save_weights_path + "." + str( ep ) )
-		time.sleep(3)
+		time.sleep(5)
 		#m.save( save_weights_path + ".model." + str( ep ) )
 
 if __name__ == "__main__":
