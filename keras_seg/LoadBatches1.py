@@ -165,7 +165,7 @@ class ImageGeneratot:
         self.zippedList_train = list(zip(self.imagesList[:self.train_index], self.LabelsList[:self.train_index]))
 
         # shuffle data
-        random.seed(1000)
+        random.seed(988)
         random.shuffle(self.zippedList_train)
 
     def returnPair(self):
