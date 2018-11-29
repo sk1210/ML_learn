@@ -142,7 +142,7 @@ class ImageGeneratot:
         folders = glob.glob(folder_dir + "/*")	
         img_dir = []
         label_dir = []
-        for folder in folders[0:2]:
+        for folder in folders:
             label_dir += glob.glob( os.path.join(folder, "mask") + "/*.png")
             img_dir += glob.glob( os.path.join(folder, "img") + "/*.png")
         return img_dir,label_dir
