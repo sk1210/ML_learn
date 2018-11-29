@@ -12,6 +12,7 @@ from IPython.display import Image
 
 #images_path = img_dir
 images_path = "gdrive/My Drive/My_Projects/data/human_seg/test_images/"
+images_path = "gdrive/My Drive/My_Projects/data/human_seg/img/"
 weights_path = "gdrive/My Drive/My_Projects/weights/vgg_unet_448_."
 output_path = "gdrive/My Drive/My_Projects/results/"
 modelFN = modelFns[ model_name ]
@@ -48,7 +49,9 @@ for i,imgName in enumerate(images):
 	seg_img = cv2.resize(seg_img  , (input_width , input_height ))
 	img = cv2.imread(imgName)
 	img = cv2.resize(img  , (input_width , input_height ))
-	out_img = np.hstack((img, seg_img))
+	blend_img = img[:,:,2] += pr
+	out_img = np.hstack((img, blend_img))
+	
 	cv2.imwrite(  outName , out_img )
 	print (i)
 	plt.title('my picture'+str(i))
