@@ -50,7 +50,7 @@ for i,imgName in enumerate(images):
 	seg_img = cv2.resize(seg_img  , (input_width , input_height ))
 	img = cv2.imread(imgName)
 	img = cv2.resize(img  , (input_width , input_height ))
-	blend_img = img[:,:,2] += pr
+	blend_img = img[:,:,2] + pr
 	out_img = np.hstack((img, blend_img))
 	
 	cv2.imwrite(  outName , out_img )
