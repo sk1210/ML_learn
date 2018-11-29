@@ -28,8 +28,8 @@ def train():
 	G = gen.getBatch()
 	for ep in range( epoch+1,epochs ):
 		print(ep)
-		m.fit_generator( G , 1024  , epochs=1 )
-		if ep % 5 == 0:
+		m.fit_generator( G , 512  , epochs=1 )
+		if ep % 2 == 0:
 			m.save_weights( save_weights_path + "." + str( ep ) )
 		time.sleep(3)
 		#m.save( save_weights_path + ".model." + str( ep ) )
