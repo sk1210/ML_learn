@@ -9,6 +9,7 @@ import sys
 from arguments import *
 from matplotlib import pyplot as plt
 from IPython.display import Image
+import time
 
 #images_path = img_dir
 images_path = "gdrive/My Drive/My_Projects/data/human_seg/test_images/"
@@ -57,7 +58,9 @@ for i,imgName in enumerate(images):
 	plt.title('my picture'+str(i))
 	plt.imshow(img)
 	plt.show();
-	display(out_img)
-
+	cv2.imwrite("test.jpg",out_img)
+	time.sleep(1)
+	display("test.jpg")
+	time.sleep(0.5)
 	if i>100:break
 
