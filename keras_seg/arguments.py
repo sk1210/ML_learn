@@ -15,7 +15,7 @@ input_height = 448
 input_width = 448
 
 save_weights_path = "gdrive/My Drive/My_Projects/weights/vgg_unet_448_"
-epochs = 150
+epochs = 250
 load_weights = ""
 optimizer_name = "adadelta"
 model_name = "vgg_unet"
