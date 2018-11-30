@@ -172,10 +172,10 @@ class ImageGeneratot:
 
         if self.index >= len(self.zippedList_train)-1: # reset index
             self.index = 0
+            random.shuffle( self.zippedList_train )
         else:
             self.index += 1
-            random.shuffle( self.zippedList_train )
-
+            
         return self.zippedList_train[self.index]
 
     def getBatch(self):
