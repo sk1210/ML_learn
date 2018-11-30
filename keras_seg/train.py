@@ -13,8 +13,8 @@ def train():
 		  metrics=['accuracy'])
 	m.summary()
 
-	load_weights =  "gdrive/My Drive/My_Projects/weights/vgg_unet_448_.110"
-	epoch = 110
+	load_weights =  "gdrive/My Drive/My_Projects/weights/vgg_unet_448_.116"
+	epoch = 116
 	if len( load_weights ) > 0:
 		m.load_weights(load_weights, by_name=False,skip_mismatch=False)
 
