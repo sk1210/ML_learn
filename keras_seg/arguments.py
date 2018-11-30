@@ -9,7 +9,7 @@ img_dir = r"gdrive/My Drive/My_Projects/data/All_converted/"
 
 train_images_path = img_dir
 train_segs_path = mask
-train_batch_size = 4
+train_batch_size = 6
 n_classes = 2
 input_height = 320
 input_width = 320
