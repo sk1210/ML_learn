@@ -11,10 +11,10 @@ train_images_path = img_dir
 train_segs_path = mask
 train_batch_size = 6
 n_classes = 2
-input_height = 448
-input_width = 448
+input_height = 256
+input_width = 256
 
-save_weights_path = "gdrive/My Drive/My_Projects/weights/vgg_unet_448_"
+save_weights_path = "gdrive/My Drive/My_Projects/weights/vgg_unet_256_"
 epochs = 250
 load_weights = ""
 optimizer_name = "adadelta"
