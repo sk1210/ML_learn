@@ -83,7 +83,7 @@ class ImageGeneratot:
         self.index = 0
 
         #load Images path
-        self.train_index = 4800
+        self.train_index = -1
         self.test_index = 1000
 
         self.loadImages()
