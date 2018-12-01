@@ -154,7 +154,18 @@ class ImageGeneratot:
         
         self.imagesList.sort()
         self.LabelsList.sort()
-
+        
+        # filter blank images
+        imgList , labelList = [],[]
+        for img_name,label_name in zip(self.imagesList,self.LabelsList):
+            label_img = cv2.imread(label_name,0)
+            if cv2.countNonZero(label_img):
+                imgList.append(img_name)
+                labelList.append(label_name)
+        print ("Blank Images : " , len(labelList), len(self.LabelsList))
+        self.imagesList = imgList
+        self.LabelsList = labelList
+            
         assert len(self.imagesList) == len(self.LabelsList)
 
         for im, seg in zip(self.imagesList, self.LabelsList):
