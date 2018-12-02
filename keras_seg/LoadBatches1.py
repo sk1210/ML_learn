@@ -95,7 +95,7 @@ class ImageGeneratot:
 
     def augmentor(self):
         self.commonAug = iaa.Sequential([
-                    iaa.Fliplr(p=0.4)
+                    iaa.Fliplr(p=0.2)
             ])
         seq_det = self.commonAug.to_deterministic()
 
@@ -105,20 +105,20 @@ class ImageGeneratot:
 
         self.seq_img_only = iaa.Sequential(
             [
-                iaa.SomeOf((0, 3),
+                iaa.SomeOf((0, 1),
                            [
 
                                iaa.OneOf([
-                                   iaa.GaussianBlur((0, 0.5)),  # blur images with a sigma between 0 and 3.0
-                                   iaa.AverageBlur(k=(2, 3)),
+                                   #iaa.GaussianBlur((0, 0.5)),  # blur images with a sigma between 0 and 3.0
+                                   #iaa.AverageBlur(k=(2, 3)),
                                    # blur image using local means with kernel sizes between 2 and 7
-                                   iaa.MedianBlur(k=(3, 3)),
+                                   #iaa.MedianBlur(k=(3, 3)),
                                    # blur image using local medians with kernel sizes between 2 and 7
                                ]),
-                               iaa.Sharpen(alpha=(0.1, 0.3), lightness=(0.8, 1)),  # sharpen images
+                               #iaa.Sharpen(alpha=(0.1, 0.3), lightness=(0.8, 1)),  # sharpen images
 
 
-                               iaa.AdditiveGaussianNoise(loc=0, scale=(0.0, 0.05 * 255), per_channel=0.5),
+                               #iaa.AdditiveGaussianNoise(loc=0, scale=(0.0, 0.05 * 255), per_channel=0.5),
                                # add gaussian noise to images
                                iaa.OneOf([
                                    #iaa.Dropout((0.001, 0.02), per_channel=0.3),  # randomly remove up to 10% of the pixels
@@ -126,10 +126,10 @@ class ImageGeneratot:
                                ]),
 
                                # change brightness of images (by -10 to 10 of original value)
-                               iaa.AddToHueAndSaturation((-5, 5)),  # change hue and saturation
-                               iaa.Multiply((0.8, 1.2), per_channel=0.5),
+                               #iaa.AddToHueAndSaturation((-5, 5)),  # change hue and saturation
+                               #iaa.Multiply((0.8, 1.2), per_channel=0.5),
 
-                               iaa.ContrastNormalization((0.8, 1.5), per_channel=0.5),  # improve or worsen the contrast
+                               #iaa.ContrastNormalization((0.8, 1.5), per_channel=0.5),  # improve or worsen the contrast
 
                            ],
                            random_order=True
