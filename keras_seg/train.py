@@ -15,7 +15,7 @@ def train():
 
 	load_weights =  "gdrive/My Drive/My_Projects/weights/vgg_unet_256_.120"
 	epoch = 0
-	if len( load_weights and 0  ) > 0:
+	if len( load_weights   )and 0 > 0:
 		m.load_weights(load_weights, by_name=False,skip_mismatch=False)
 
 	print ("Model output shape" ,  m.output_shape)
