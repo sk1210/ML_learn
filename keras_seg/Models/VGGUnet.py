@@ -60,33 +60,33 @@ def VGGUnet( n_classes ,  input_height=416, input_width=608 , vgg_level=3):
 
 	levels = [f1 , f2 , f3 , f4 , f5 ]
 
-	o = f4
+	o = f5
 
 	o = ( ZeroPadding2D( (1,1) , data_format=IMAGE_ORDERING ))(o)
 	o = ( Conv2D(512, (3, 3), padding='valid', data_format=IMAGE_ORDERING))(o)
 	o = ( BatchNormalization())(o)
 
 	o = (UpSampling2D( (2,2), data_format=IMAGE_ORDERING))(o)
-	o = ( concatenate([ o ,f3],axis=1 )  )
+	o = ( concatenate([ o ,f4],axis=1 )  )
 	o = ( ZeroPadding2D( (1,1), data_format=IMAGE_ORDERING))(o)
 	o = ( Conv2D( 256, (3, 3), padding='valid', data_format=IMAGE_ORDERING))(o)
 	o = ( BatchNormalization())(o)
 
 	o = (UpSampling2D( (2,2), data_format=IMAGE_ORDERING))(o)
-	o = ( concatenate([o,f2],axis=1 ) )
+	o = ( concatenate([o,f3],axis=1 ) )
 	o = ( ZeroPadding2D((1,1) , data_format=IMAGE_ORDERING ))(o)
 	o = ( Conv2D( 128 , (3, 3), padding='valid' , data_format=IMAGE_ORDERING ) )(o)
 	o = ( BatchNormalization())(o)
 
 	o = (UpSampling2D( (2,2), data_format=IMAGE_ORDERING))(o)
-	o = ( concatenate([o,f1],axis=1 ) )
+	o = ( concatenate([o,f2],axis=1 ) )
 	o = ( ZeroPadding2D((1,1)  , data_format=IMAGE_ORDERING ))(o)
 	o = ( Conv2D( 64 , (3, 3), padding='valid'  , data_format=IMAGE_ORDERING ))(o)
 	o = ( BatchNormalization())(o)
 	
 	# add one more upSampling block
 	o = (UpSampling2D((2, 2), data_format=IMAGE_ORDERING))(o)
-	o = (concatenate([o, f0], axis=1))
+	o = (concatenate([o, f1], axis=1))
 	o = (ZeroPadding2D((1, 1), data_format=IMAGE_ORDERING))(o)
 	o = (Conv2D(32, (3, 3), padding='valid', data_format=IMAGE_ORDERING))(o)
 	o = (BatchNormalization())(o)
