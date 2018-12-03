@@ -56,7 +56,7 @@ def VGGUnet( n_classes ,  input_height=416, input_width=608 , vgg_level=3):
 	x = Dense( 1000 , activation='softmax', name='predictions')(x)
 
 	vgg  = Model(  img_input , x  )
-	#vgg.load_weights(VGG_Weights_path, by_name=True, skip_mismatch=True)
+	vgg.load_weights(VGG_Weights_path, by_name=True, skip_mismatch=True)
 
 	levels = [f1 , f2 , f3 , f4 , f5 ]
 
