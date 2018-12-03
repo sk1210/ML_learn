@@ -5,7 +5,7 @@ img_dir = r"gdrive/My Drive/My_Projects/data/human_seg/img/"
 mask = r"gdrive/My Drive/My_Projects/data/human_seg/mask/"
 
 # for multiple data
-img_dir = r"gdrive/My Drive/My_Projects/data/All_converted/"
+img_dir = r"gdrive/My Drive/My_Projects/data/All_converted_filt/"
 
 train_images_path = img_dir
 train_segs_path = mask
