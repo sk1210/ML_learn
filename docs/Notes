@@ -1,0 +1,22 @@
+If DNN are good at memorizing the data, 
+why DNN Generalize on unseen test data?
+
+We explicitly apply regularization -> dropout , L2 Norm
+But without regularization also NN works well on test data
+
+Initially learn simple features, then complex features 
+Content aware 
+
+
+Mutual Information –
+Hidden layer activation contains about X and Y
+Information Pass
+First phase of fast fitting : Layer tries to memorize the input
+Second – discard some information about input X -> ignore irrelevant part of input information 
+Forget  Different background, noise, lighting, brightness condition -> Forgetting phase
+
+First phase happens very fast 
+Second phase is very slow  - > SNR
+Overfitting / Over Compression  
+ Tibshy
+
